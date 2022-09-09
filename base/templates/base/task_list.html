@@ -5,8 +5,19 @@
     <title>Title</title>
 </head>
 <body>
+{% if request.user.is_authenticated %}
+<p> {{ request.user }}</p>
+<a href="{% url 'logout' %}">logout</a>
+{% else %}
+<a href="{% url 'login' %}">login</a>
+{% endif %}
 <h1>My To-Do List..!!!</h1>
 <h2> <a href="{% url 'create-task' %}">Add item</a> </h2>
+<!--form for search-->
+<form>
+    <input type="text" name="search-area" value="{{ search_input }}">
+    <input type="submit" value="search">
+</form>
 <table>
     <tr>
         <th>

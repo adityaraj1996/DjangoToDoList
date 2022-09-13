@@ -9,6 +9,13 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from .form import UserRegisterForm
 from django.contrib import messages
 
+from django.views import View
+from django.shortcuts import redirect
+from django.db import transaction
+
+from .models import Task
+from .form import PositionForm
+
 # Create your views here.
 
 
@@ -93,3 +100,16 @@ class TaskDelete(LoginRequiredMixin, DeleteView):
     model = Task                                           # will look for model(lower_case)_confirm_delete.html
     context_object_name = 'task'
     success_url = reverse_lazy('tasks')
+
+
+class TaskReorder(View):
+    def post(self, request):
+        form = PositionForm(request.POST)
+
+        if form.is_valid():
+            positionList = form.cleaned_data["position"].split(',')
+
+            with transaction.atomic():
+                self.request.user.set_task_order(positionList)
+
+        return redirect(reverse_lazy('tasks'))
